@@ -1,7 +1,7 @@
 {
-  "name": "kenzi-ai-capacitor-google-navigation",
+  "name": "@kenzi-ai/capacitor-google-navigation",
   "version": "0.0.1",
-  "description": "Capacitor Google Navigation SDK, powered by kenzi.ai",
+  "description": "apacitor plugin for Google Navigation SDK (embedded turn-by-turn)",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
@@ -27,7 +27,8 @@
   "keywords": [
     "capacitor",
     "plugin",
-    "native"
+    "native",
+    "Google Navigation SDK"
   ],
   "scripts": {
     "verify": "npm run verify:ios && npm run verify:android && npm run verify:web",
