@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Title shown in the header of the navigation screen -->
+    <string name="kenzi_nav_title">Navigation</string>
+</resources>
