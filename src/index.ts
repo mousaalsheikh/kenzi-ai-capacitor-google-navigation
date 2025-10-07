@@ -13,6 +13,10 @@ export interface StartOptions {
   destLng: number;
   waypoints?: Waypoint[];
   simulate?: boolean;
+
+  // NEW (Android uses these extras; iOS can ignore)
+  showHeader?: boolean;
+  logoUrl?: string;
 }
 
 export interface KenziGoogleNavigationPlugin {
@@ -23,13 +27,10 @@ export interface KenziGoogleNavigationPlugin {
 const KenziGoogleNavigation = registerPlugin<KenziGoogleNavigationPlugin>(
   'KenziGoogleNavigation',
   {
-    web: () => import('./web').then((m) => new m.KenziGoogleNavigationWeb()),
+    web: () => import('./web').then(m => new m.KenziGoogleNavigationWeb()),
   }
 );
 
-// Default export for easy importing
 export default KenziGoogleNavigation;
-
-// Named exports (optional)
-export * from './definitions';
 export { KenziGoogleNavigation };
+export * from './definitions'; // keep if you have a separate file

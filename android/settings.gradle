@@ -1,2 +1,29 @@
-include ':capacitor-android'
-project(':capacitor-android').projectDir = new File('../node_modules/@capacitor/android/capacitor')
+// MUST be first:
+pluginManagement {
+  plugins {
+    id("com.android.library") version "8.7.2"
+    id("org.jetbrains.kotlin.android") version "1.9.24"
+  }
+  repositories {
+    google()
+    mavenCentral()
+    gradlePluginPortal()
+  }
+}
+
+dependencyResolutionManagement {
+  repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+  repositories {
+    google()
+    mavenCentral()
+  }
+}
+
+rootProject.name = "kenzi-ai-capacitor-google-navigation"
+
+// The plugin is a single library module (root project)
+include(":")
+
+// Include Capacitor Android bridge as a module
+include(":capacitor-android")
+project(":capacitor-android").projectDir = file("../node_modules/@capacitor/android/capacitor")

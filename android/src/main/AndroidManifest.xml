@@ -1,2 +1,11 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest package="kenzi.ai.capacitor.google.navigation"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+  <application>  
+    <activity
+      android:name=".NavigationActivity"
+      android:exported="false"
+      android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+      android:configChanges="keyboardHidden|orientation|screenSize|uiMode"
+      android:screenOrientation="portrait" />
+  </application>
 </manifest>

@@ -2,4 +2,5 @@
 <resources>
     <!-- Title shown in the header of the navigation screen -->
     <string name="kenzi_nav_title">Navigation</string>
+    <string name="kenzi_nav_close">Close</string>
 </resources>
