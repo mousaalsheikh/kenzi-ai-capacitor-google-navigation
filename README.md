@@ -13,25 +13,108 @@ npx cap sync
 
 <docgen-index>
 
-* [`echo(...)`](#echo)
+* [`initialize(...)`](#initialize)
+* [`startNavigation(...)`](#startnavigation)
+* [`addListener('navigationClosed', ...)`](#addlistenernavigationclosed-)
+* [`removeAllListeners()`](#removealllisteners)
+* [Interfaces](#interfaces)
+* [Type Aliases](#type-aliases)
 
 </docgen-index>
 
 <docgen-api>
 <!--Update the source file JSDoc comments and rerun docgen to update the docs below-->
 
-### echo(...)
+### initialize(...)
 
 ```typescript
-echo(options: { value: string; }) => Promise<{ value: string; }>
+initialize(options?: InitOptions | undefined) => Promise<{ ok: boolean; }>
 ```
 
-| Param         | Type                            |
-| ------------- | ------------------------------- |
-| **`options`** | <code>{ value: string; }</code> |
+| Param         | Type                                                |
+| ------------- | --------------------------------------------------- |
+| **`options`** | <code><a href="#initoptions">InitOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
+**Returns:** <code>Promise&lt;{ ok: boolean; }&gt;</code>
 
 --------------------
+
+
+### startNavigation(...)
+
+```typescript
+startNavigation(options: StartOptions) => Promise<{ started: boolean; }>
+```
+
+| Param         | Type                                                  |
+| ------------- | ----------------------------------------------------- |
+| **`options`** | <code><a href="#startoptions">StartOptions</a></code> |
+
+**Returns:** <code>Promise&lt;{ started: boolean; }&gt;</code>
+
+--------------------
+
+
+### addListener('navigationClosed', ...)
+
+```typescript
+addListener(eventName: 'navigationClosed', listenerFunc: (data: { closed: true; }) => void) => Promise<PluginListenerHandle>
+```
+
+| Param              | Type                                              |
+| ------------------ | ------------------------------------------------- |
+| **`eventName`**    | <code>'navigationClosed'</code>                   |
+| **`listenerFunc`** | <code>(data: { closed: true; }) =&gt; void</code> |
+
+**Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt;</code>
+
+--------------------
+
+
+### removeAllListeners()
+
+```typescript
+removeAllListeners() => Promise<void>
+```
+
+--------------------
+
+
+### Interfaces
+
+
+#### InitOptions
+
+| Prop            | Type                | Description                                        |
+| --------------- | ------------------- | -------------------------------------------------- |
+| **`iosApiKey`** | <code>string</code> | iOS only (Android reads key from AndroidManifest). |
+
+
+#### StartOptions
+
+| Prop            | Type                    | Description               |
+| --------------- | ----------------------- | ------------------------- |
+| **`originLat`** | <code>number</code>     |                           |
+| **`originLng`** | <code>number</code>     |                           |
+| **`destLat`**   | <code>number</code>     |                           |
+| **`destLng`**   | <code>number</code>     |                           |
+| **`waypoints`** | <code>Waypoint[]</code> |                           |
+| **`simulate`**  | <code>boolean</code>    |                           |
+| **`title`**     | <code>string</code>     | Android-only header title |
+
+
+#### PluginListenerHandle
+
+| Prop         | Type                                      |
+| ------------ | ----------------------------------------- |
+| **`remove`** | <code>() =&gt; Promise&lt;void&gt;</code> |
+
+
+### Type Aliases
+
+
+#### Waypoint
+
+<code>{ lat: number; lng: number }</code>
 
 </docgen-api>

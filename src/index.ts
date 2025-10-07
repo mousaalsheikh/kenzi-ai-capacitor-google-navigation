@@ -1,9 +1,11 @@
+import type { PluginListenerHandle } from '@capacitor/core';
 import { registerPlugin } from '@capacitor/core';
 
 export type Waypoint = { lat: number; lng: number };
 
 export interface InitOptions {
-  iosApiKey?: string; // (ignored on Android; Android reads key from manifest)
+  /** iOS only (Android reads key from AndroidManifest). */
+  iosApiKey?: string;
 }
 
 export interface StartOptions {
@@ -13,22 +15,25 @@ export interface StartOptions {
   destLng: number;
   waypoints?: Waypoint[];
   simulate?: boolean;
-  /** Optional header title shown in the in-app UI (Android only) */
+  /** Android-only header title */
   title?: string;
 }
 
 export interface KenziGoogleNavigationPlugin {
   initialize(options?: InitOptions): Promise<{ ok: boolean }>;
   startNavigation(options: StartOptions): Promise<{ started: boolean }>;
+
+  // Events
+  addListener(
+    eventName: 'navigationClosed',
+    listenerFunc: (data: { closed: true }) => void
+  ): Promise<PluginListenerHandle>;
+
+  removeAllListeners(): Promise<void>;
 }
 
-const KenziGoogleNavigation = registerPlugin<KenziGoogleNavigationPlugin>(
-  'KenziGoogleNavigation',
-  {
-    // Web fallback (no-op) – optional: implement if you like
-    web: () => import('./web').then(m => new m.KenziGoogleNavigationWeb()),
-  }
+export const KenziGoogleNavigation = registerPlugin<KenziGoogleNavigationPlugin>(
+  'KenziGoogleNavigation'
 );
 
 export default KenziGoogleNavigation;
-export { KenziGoogleNavigation };

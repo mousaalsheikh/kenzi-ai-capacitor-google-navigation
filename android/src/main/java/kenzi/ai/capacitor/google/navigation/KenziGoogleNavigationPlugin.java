@@ -1,10 +1,7 @@
 package kenzi.ai.capacitor.google.navigation;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 
-import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -14,9 +11,32 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 @CapacitorPlugin(name = "KenziGoogleNavigation")
 public class KenziGoogleNavigationPlugin extends Plugin {
 
+    // ✅ Keep a static reference so activities can access the plugin instance
+    private static KenziGoogleNavigationPlugin instance;
+
+    @Override
+    public void load() {
+        super.load();
+        instance = this;
+    }
+
+    public static KenziGoogleNavigationPlugin getInstance() {
+        return instance;
+    }
+
+    /** Called from NavigationActivity when navigation closes */
+    public void notifyNavigationClosed() {
+        JSObject ret = new JSObject();
+        ret.put("closed", true);
+        notifyListeners("navigationClosed", ret);
+    }
+
     @PluginMethod
     public void initialize(PluginCall call) {
-        call.resolve(new JSObject().put("ok", true));
+        // You can optionally handle iOS key setup here later
+        JSObject ret = new JSObject();
+        ret.put("ok", true);
+        call.resolve(ret);
     }
 
     @PluginMethod
@@ -33,8 +53,7 @@ public class KenziGoogleNavigationPlugin extends Plugin {
             return;
         }
 
-        // Build intent
-        final Intent intent = new Intent(getContext(), NavigationActivity.class);
+        Intent intent = new Intent(getContext(), NavigationActivity.class);
         if (originLat != null && originLng != null) {
             intent.putExtra("originLat", originLat);
             intent.putExtra("originLng", originLng);
@@ -44,29 +63,11 @@ public class KenziGoogleNavigationPlugin extends Plugin {
         intent.putExtra("simulate", simulate != null && simulate);
         intent.putExtra("title", title);
 
-        // Optional waypoints
         if (call.hasOption("waypoints")) {
-            try {
-                JSArray arr = call.getArray("waypoints");
-                if (arr != null) {
-                    intent.putExtra("waypointsJson", arr.toString());
-                }
-            } catch (Exception ignored) {}
+            intent.putExtra("waypointsJson", call.getArray("waypoints").toString());
         }
 
-        // Start activity safely whether or not we have a foreground Activity
-        Activity activity = getActivity();
-        if (activity != null) {
-            activity.runOnUiThread(() -> {
-                activity.startActivity(intent);
-                call.resolve(new JSObject().put("started", true));
-            });
-        } else {
-            // Fallback: use application context
-            Context ctx = getContext();
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            ctx.startActivity(intent);
-            call.resolve(new JSObject().put("started", true));
-        }
+        getActivity().startActivity(intent);
+        call.resolve(new JSObject().put("started", true));
     }
 }

@@ -43,10 +43,11 @@ public class NavigationActivity extends AppCompatActivity {
         TextView titleView = findViewById(R.id.title);
         ImageButton btnClose = findViewById(R.id.btn_close);
 
-        // ---- title: from saved state, else from intent, else app label, else "Navigation"
+        // ---- title: from saved state, else from intent, else app label, else
+        // "Navigation"
         String titleText = null;
         // if (savedInstanceState != null) {
-        //     titleText = savedInstanceState.getString(KEY_TITLE);
+        // titleText = savedInstanceState.getString(KEY_TITLE);
         // }
         if (titleText == null) {
             titleText = getIntent().getStringExtra("title");
@@ -58,7 +59,8 @@ public class NavigationActivity extends AppCompatActivity {
                 if (appLabel != null && appLabel.length() > 0) {
                     titleText = appLabel.toString();
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
         if (titleText == null || titleText.trim().isEmpty()) {
             titleText = "Navigation";
@@ -70,11 +72,10 @@ public class NavigationActivity extends AppCompatActivity {
         ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             header.setPadding(
-                header.getPaddingLeft(),
-                bars.top,                 // header sits below status bar
-                header.getPaddingRight(),
-                header.getPaddingBottom()
-            );
+                    header.getPaddingLeft(),
+                    bars.top, // header sits below status bar
+                    header.getPaddingRight(),
+                    header.getPaddingBottom());
             v.setPadding(bars.left, 0, bars.right, bars.bottom);
             return insets;
         });
@@ -82,22 +83,26 @@ public class NavigationActivity extends AppCompatActivity {
         // Fragment
         SupportNavigationFragment fragment = SupportNavigationFragment.newInstance();
         getSupportFragmentManager()
-            .beginTransaction()
-            .replace(R.id.nav_container, fragment)
-            .commitNow();
+                .beginTransaction()
+                .replace(R.id.nav_container, fragment)
+                .commitNow();
 
         btnClose.setOnClickListener(v -> stopAndFinish());
 
         NavigationApi.getNavigator(
-            this,
-            new NavigationApi.NavigatorListener() {
-                @Override public void onNavigatorReady(Navigator nav) {
-                    navigator = nav;
-                    startGuidanceFlow();
-                }
-                @Override public void onError(int errorCode) { finish(); }
-            }
-        );
+                this,
+                new NavigationApi.NavigatorListener() {
+                    @Override
+                    public void onNavigatorReady(Navigator nav) {
+                        navigator = nav;
+                        startGuidanceFlow();
+                    }
+
+                    @Override
+                    public void onError(int errorCode) {
+                        finish();
+                    }
+                });
     }
 
     private String resolveTitle() {
@@ -172,6 +177,13 @@ public class NavigationActivity extends AppCompatActivity {
             }
         } catch (Exception ignored) {
         }
+
+        // 🔔 Notify plugin listeners
+        KenziGoogleNavigationPlugin plugin = KenziGoogleNavigationPlugin.getInstance();
+        if (plugin != null) {
+            plugin.notifyNavigationClosed();
+        }
+
         finish();
     }
 
