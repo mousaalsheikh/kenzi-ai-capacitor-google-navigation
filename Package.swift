@@ -2,11 +2,11 @@
 import PackageDescription
 
 let package = Package(
-    name: "KenziAiCapacitorGoogleNavigation",
+    name: "KenziCapacitorGoogleNavigation",
     platforms: [.iOS(.v14)],
     products: [
         .library(
-            name: "KenziAiCapacitorGoogleNavigation",
+            name: "KenziCapacitorGoogleNavigation",
             targets: ["KenziGoogleNavigationPlugin"])
     ],
     dependencies: [
