@@ -2,6 +2,8 @@
 
 Capacitor Google Navigation SDK, powered by kenzi.ai
 
+for help and support please contact us at connect@kenzi.ai
+
 ## Install
 
 ```bash

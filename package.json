@@ -1,6 +1,6 @@
 {
   "name": "kenzi-capacitor-google-navigation",
-  "version": "1.0.0",
+  "version": "2.0.1",
   "description": "Capacitor plugin for Google Navigation SDK (embedded turn-by-turn)",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
@@ -19,10 +19,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mousaalsheikh/-kenzi-ai-capacitor-google-navigation.git.git"
+    "url": "git+https://github.com/mousaalsheikh/kenzi-ai-capacitor-google-navigation.git.git"
   },
   "bugs": {
-    "url": "https://github.com/mousaalsheikh/-kenzi-ai-capacitor-google-navigation.git/issues"
+    "url": "https://github.com/mousaalsheikh/kenzi-ai-capacitor-google-navigation.git/issues"
   },
   "keywords": [
     "capacitor",
