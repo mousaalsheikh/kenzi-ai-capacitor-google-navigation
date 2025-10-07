@@ -1,0 +1,15 @@
+<resources>
+    <!-- Keep if you’re not handling WindowInsets -->
+    <dimen name="status_bar_spacer_height">24dp</dimen>
+
+    <!-- Header sizing (default) -->
+    <dimen name="header_height">48dp</dimen>
+    <dimen name="header_hpad_start">12dp</dimen>
+    <dimen name="header_hpad_end">12dp</dimen>
+    <dimen name="header_divider_height">10dp</dimen>
+
+    <!-- Logo & close -->
+    <dimen name="logo_max_height">32dp</dimen>
+    <dimen name="close_btn_size">40dp</dimen>
+    <dimen name="close_btn_padding">6dp</dimen>
+</resources>

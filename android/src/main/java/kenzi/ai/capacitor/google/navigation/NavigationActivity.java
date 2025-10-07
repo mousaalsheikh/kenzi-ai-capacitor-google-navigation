@@ -3,7 +3,7 @@ package kenzi.ai.capacitor.google.navigation;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,7 +12,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.bumptech.glide.Glide;
 import com.google.android.libraries.navigation.ListenableResultFuture;
 import com.google.android.libraries.navigation.NavigationApi;
 import com.google.android.libraries.navigation.Navigator;
@@ -29,6 +28,10 @@ public class NavigationActivity extends AppCompatActivity {
 
     private Navigator navigator;
 
+    // store base paddings so insets don’t compound
+    private int baseRootPadLeft, baseRootPadTop, baseRootPadRight, baseRootPadBottom;
+    private int baseHeaderPadLeft, baseHeaderPadTop, baseHeaderPadRight, baseHeaderPadBottom;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
@@ -37,56 +40,83 @@ public class NavigationActivity extends AppCompatActivity {
 
         View root = findViewById(R.id.root);
         View header = findViewById(R.id.header);
+        TextView titleView = findViewById(R.id.title);
+        ImageButton btnClose = findViewById(R.id.btn_close);
 
-        // Prevent overlap with status bar / navigation bar
+        // ---- title: from saved state, else from intent, else app label, else "Navigation"
+        String titleText = null;
+        // if (savedInstanceState != null) {
+        //     titleText = savedInstanceState.getString(KEY_TITLE);
+        // }
+        if (titleText == null) {
+            titleText = getIntent().getStringExtra("title");
+        }
+        if (titleText == null || titleText.trim().isEmpty()) {
+            // app label fallback
+            try {
+                CharSequence appLabel = getPackageManager().getApplicationLabel(getApplicationInfo());
+                if (appLabel != null && appLabel.length() > 0) {
+                    titleText = appLabel.toString();
+                }
+            } catch (Exception ignored) {}
+        }
+        if (titleText == null || titleText.trim().isEmpty()) {
+            titleText = "Navigation";
+        }
+        titleView.setText(titleText);
+        // ---- end title
+
+        // Insets listener (unchanged)
         ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             header.setPadding(
-                    header.getPaddingLeft(),
-                    header.getPaddingTop() + bars.top,
-                    header.getPaddingRight(),
-                    header.getPaddingBottom()
+                header.getPaddingLeft(),
+                bars.top,                 // header sits below status bar
+                header.getPaddingRight(),
+                header.getPaddingBottom()
             );
             v.setPadding(bars.left, 0, bars.right, bars.bottom);
             return insets;
         });
 
-        // Add the navigation fragment
+        // Fragment
         SupportNavigationFragment fragment = SupportNavigationFragment.newInstance();
         getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.nav_container, fragment)
-                .commitNow();
+            .beginTransaction()
+            .replace(R.id.nav_container, fragment)
+            .commitNow();
 
-        ImageButton btnClose = findViewById(R.id.btn_close);
-        ImageView logo = findViewById(R.id.logo);
-
-        boolean showHeader = getIntent().getBooleanExtra("showHeader", true);
-        String logoUrl = getIntent().getStringExtra("logoUrl");
-
-        header.setVisibility(showHeader ? View.VISIBLE : View.GONE);
-        if (showHeader && logoUrl != null && !logoUrl.isEmpty()) {
-            Glide.with(this).load(logoUrl).into(logo);
-        }
-
-        // Close button stops guidance and exits
         btnClose.setOnClickListener(v -> stopAndFinish());
 
-        // Initialize the navigator
         NavigationApi.getNavigator(
-                this,
-                new NavigationApi.NavigatorListener() {
-                    @Override
-                    public void onNavigatorReady(Navigator nav) {
-                        navigator = nav;
-                        startGuidanceFlow();
-                    }
+            this,
+            new NavigationApi.NavigatorListener() {
+                @Override public void onNavigatorReady(Navigator nav) {
+                    navigator = nav;
+                    startGuidanceFlow();
+                }
+                @Override public void onError(int errorCode) { finish(); }
+            }
+        );
+    }
 
-                    @Override
-                    public void onError(int errorCode) {
-                        finish();
-                    }
-                });
+    private String resolveTitle() {
+        try {
+            CharSequence appLabel = getPackageManager().getApplicationLabel(getApplicationInfo());
+            if (appLabel != null && appLabel.length() > 0) {
+                return appLabel.toString();
+            }
+        } catch (Exception ignored) {
+        }
+        return "Navigation";
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // re-ask for insets after unlock/config changes
+        View root = findViewById(R.id.root);
+        ViewCompat.requestApplyInsets(root);
     }
 
     private void startGuidanceFlow() {
@@ -113,7 +143,8 @@ public class NavigationActivity extends AppCompatActivity {
                             .setLatLng(o.getDouble("lat"), o.getDouble("lng"))
                             .build());
                 }
-            } catch (Exception ignored) { }
+            } catch (Exception ignored) {
+            }
         }
 
         double dLat = getIntent().getDoubleExtra("destLat", 0);
@@ -139,7 +170,8 @@ public class NavigationActivity extends AppCompatActivity {
                 navigator.stopGuidance();
                 navigator.clearDestinations();
             }
-        } catch (Exception ignored) { }
+        } catch (Exception ignored) {
+        }
         finish();
     }
 

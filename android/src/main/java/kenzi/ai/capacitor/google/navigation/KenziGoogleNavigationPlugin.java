@@ -1,5 +1,7 @@
 package kenzi.ai.capacitor.google.navigation;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 
 import com.getcapacitor.JSArray;
@@ -12,80 +14,59 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 @CapacitorPlugin(name = "KenziGoogleNavigation")
 public class KenziGoogleNavigationPlugin extends Plugin {
 
-    // Optional helper from your earlier code; keep if you still use echo()
-    private KenziGoogleNavigation implementation = new KenziGoogleNavigation();
-
     @PluginMethod
     public void initialize(PluginCall call) {
-        // Android reads API keys from AndroidManifest <meta-data>, so nothing to do here.
-        JSObject ret = new JSObject();
-        ret.put("ok", true);
-        call.resolve(ret);
+        call.resolve(new JSObject().put("ok", true));
     }
 
     @PluginMethod
     public void startNavigation(PluginCall call) {
-        // Required
-        Double destLat = call.getDouble("destLat");
-        Double destLng = call.getDouble("destLng");
+        Double originLat = call.getDouble("originLat");
+        Double originLng = call.getDouble("originLng");
+        Double destLat   = call.getDouble("destLat");
+        Double destLng   = call.getDouble("destLng");
+        Boolean simulate = call.getBoolean("simulate", false);
+        String title     = call.getString("title", "Navigation");
 
         if (destLat == null || destLng == null) {
             call.reject("destLat and destLng are required");
             return;
         }
 
-        // Optional
-        Double originLat = call.getDouble("originLat");
-        Double originLng = call.getDouble("originLng");
-        boolean simulate = call.getBoolean("simulate", false);
-        boolean showHeader = call.getBoolean("showHeader", false);
-        String logoUrl = call.getString("logoUrl");               // may be null
-        String title = call.getString("title", "Navigation");     // default title
-
-        Intent intent = new Intent(getContext(), NavigationActivity.class);
-
-        // Pass required destination
-        intent.putExtra("destLat", destLat);
-        intent.putExtra("destLng", destLng);
-
-        // Pass optional origin
+        // Build intent
+        final Intent intent = new Intent(getContext(), NavigationActivity.class);
         if (originLat != null && originLng != null) {
             intent.putExtra("originLat", originLat);
             intent.putExtra("originLng", originLng);
         }
-
-        // Pass simulate/header/logo/title options
-        intent.putExtra("simulate", simulate);
-        intent.putExtra("showHeader", showHeader);
-        if (logoUrl != null) intent.putExtra("logoUrl", logoUrl);
+        intent.putExtra("destLat", destLat);
+        intent.putExtra("destLng", destLng);
+        intent.putExtra("simulate", simulate != null && simulate);
         intent.putExtra("title", title);
 
-        // Optional waypoints: array of { lat, lng }
+        // Optional waypoints
         if (call.hasOption("waypoints")) {
-            JSArray waypoints = call.getArray("waypoints");
-            if (waypoints != null) {
-                // NavigationActivity parses this JSON string
-                intent.putExtra("waypointsJson", waypoints.toString());
-            }
+            try {
+                JSArray arr = call.getArray("waypoints");
+                if (arr != null) {
+                    intent.putExtra("waypointsJson", arr.toString());
+                }
+            } catch (Exception ignored) {}
         }
 
-        getActivity().startActivity(intent);
-
-        JSObject ret = new JSObject();
-        ret.put("started", true);
-        call.resolve(ret);
-    }
-
-    @PluginMethod
-    public void echo(PluginCall call) {
-        String value = call.getString("value", "");
-        JSObject ret = new JSObject();
-        // If you want the old helper behavior:
-        if (implementation != null) {
-            ret.put("value", implementation.echo(value));
+        // Start activity safely whether or not we have a foreground Activity
+        Activity activity = getActivity();
+        if (activity != null) {
+            activity.runOnUiThread(() -> {
+                activity.startActivity(intent);
+                call.resolve(new JSObject().put("started", true));
+            });
         } else {
-            ret.put("value", value);
+            // Fallback: use application context
+            Context ctx = getContext();
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            ctx.startActivity(intent);
+            call.resolve(new JSObject().put("started", true));
         }
-        call.resolve(ret);
     }
 }

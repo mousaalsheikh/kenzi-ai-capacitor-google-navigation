@@ -1,66 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#000">
 
-    <!-- Spacer below the status bar / notch -->
+    <!-- Spacer for status bar -->
     <View
         android:layout_width="match_parent"
-        android:layout_height="24dp" />
+        android:layout_height="70px" />
 
-    <!-- Fixed-height header -->
-    <LinearLayout
+    <!-- Fixed header with pixel-based sizing -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:orientation="horizontal"
+        android:layout_height="210px"
         android:background="#1B232C"
-        android:gravity="center_vertical"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:elevation="8dp">
+        android:paddingStart="32px"
+        android:paddingEnd="24px"
+        android:elevation="16px">
 
-        <!-- Logo: at most 50% of total width -->
-        <ImageView
-            android:id="@+id/logo"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:adjustViewBounds="true"
-            android:scaleType="fitStart"
-            android:maxHeight="50dp"
-            android:contentDescription="@null" />
+        <!-- Title text -->
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:text="Navigation"
+            android:textSize="60px"
+            android:textStyle="bold"
+            android:paddingBottom="12px"
+            android:textColor="@android:color/white"
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_close"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-        <!-- Spacer (optional, gives space between logo and button) -->
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.4" />
-
-        <!-- Close button on the right -->
+        <!-- Close button -->
         <ImageButton
             android:id="@+id/btn_close"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="100px"
+            android:layout_height="100px"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="6dp"
+            android:padding="12px"
             android:src="@android:drawable/ic_menu_close_clear_cancel"
-            android:tint="#FFFFFFFF"
-            android:contentDescription="@null" />
-    </LinearLayout>
+            android:tint="@android:color/white"
+            android:contentDescription="@null"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-
+    <!-- Divider -->
     <View
-        android:background="#1B232C"
         android:layout_width="match_parent"
-        android:layout_height="10dp" />
+        android:layout_height="20px"
+        android:background="#1B232C" />
 
     <!-- Map fragment -->
     <FrameLayout
         android:id="@+id/nav_container"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="0px"
         android:layout_weight="1" />
 </LinearLayout>
