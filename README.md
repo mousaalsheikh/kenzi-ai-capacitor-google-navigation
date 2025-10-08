@@ -1,13 +1,13 @@
-# kenzi-ai-capacitor-google-navigation
+# kenzi-capacitor-google-navigation
 
-Capacitor Google Navigation SDK, powered by kenzi.ai
+Capacitor plugin for Google Navigation SDK (embedded turn-by-turn), powered by kenzi.ai
 
 for help and support please contact us at connect@kenzi.ai
 
 ## Install
 
 ```bash
-npm install kenzi-ai-capacitor-google-navigation
+npm install kenzi-capacitor-google-navigation
 npx cap sync
 ```
 
